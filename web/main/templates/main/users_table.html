@@ -1,0 +1,25 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'main/css/table.css' %}">
+
+<h1>List of Require Accounts</h1>
+<table class="user-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Identification</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for phone in phones %}
+            <tr>
+                <td>{{ phone.name }}</td>
+                <td>{{ phone.identification }}</td>
+                <td>
+                    <button class="delete-phone" data-id="{{ phone.id }}">Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

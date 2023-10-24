@@ -1,0 +1,276 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>List parsers</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/body.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/index_modal_server.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/index_modal_text.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/index_form.css' %}">
+</head>
+<body>
+    {% include 'main/menu.html' %}
+    <h1>List of accounts</h1>
+    {% include 'main/main_table.html' %}
+
+    <h2>Append new account</h2>
+    <form method="post" id="create-name-form">
+        {% csrf_token %}
+        <div class="input-container">
+            Phone: 
+            {{ form.phone.label_tag }}
+            {{ form.phone }}
+        </div>
+        <div class="input-container">
+            Password: 
+            {{ form.password.label_tag }}
+            {{ form.password }}
+        </div>
+        <button type="submit">Create</button>
+    </form>
+    
+    
+
+    <div id="edit-server-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2>Edit Server</h2>
+            <form method="post" action="/" id="edit-server-form">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="user-id-input-server">
+                <input type="text" id="edit-server-input" name="server_text" placeholder="New Text Server">
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+        
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit text</h2>
+            <form method="post" action="/" id="edit-text-form">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="user-id-input-text">
+                <textarea id="edit-text-input" name="user_text" placeholder="New Text"></textarea>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+    <div class="overlay" id="overlay-text"></div> 
+
+    
+    <script>
+        $(document).ready(function () {
+            $('#create-name-form').submit(function (event) {
+                event.preventDefault();
+    
+                var formData = $(this).serialize();
+    
+                $.ajax({
+                    url: '/tg_accounts/index/create/',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Ошибка при создании нового номера телефона.');
+                    }
+                });
+            });
+
+
+            $('.edit-server').click(function (event) {
+                event.preventDefault();
+                var nameID = $(this).data('id');
+                var userServerElement = $(this).closest('tr').find('.user-server');
+                var userServer = userServerElement.text();
+                var userName = $(this).closest('tr').find('.user-name').text();
+
+                $('#user-id-input-server').val(nameID);
+                $('#edit-server-input').val(userServer);
+
+                $('#edit-server-modal').fadeIn();
+                $('#overlay').fadeIn();
+                $('body').addClass('modal-open'); // Добавляем класс для запрета скролла страницы
+            });
+
+            $('#edit-server-form').submit(function (event) {
+                event.preventDefault();
+                var nameID = $('#user-id-input-server').val();
+                var newServer = $('#edit-server-input').val();
+                $.ajax({
+                    url: '/tg_accounts/index/update_server/',
+                    type: 'POST',
+                    data: { 
+                        id: nameID,
+                        text: newServer 
+                    },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Ошибка при обновлении сервера пользователя.');
+                    }
+                });
+            });
+
+            $('#overlay').click(function () {
+                $('#edit-server-modal').fadeOut();
+                $(this).fadeOut();
+                $('body').removeClass('modal-open');
+            });
+
+            $(document).keydown(function (e) {
+                if (e.key === 'Escape') {
+                    $('#edit-server-modal').fadeOut();
+                    $('#overlay').fadeOut();
+                    $('body').removeClass('modal-open');
+                }
+            });
+
+
+            $('.delete-name').click(function (event) {
+                event.preventDefault();
+                var nameID = $(this).data('id');
+                
+                $.ajax({
+                    url: '/tg_accounts/index/delete/',
+                    type: 'POST',
+                    data: { 
+                            id: nameID,
+                        },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            });
+
+            $('.start-bot').click(function (event) {
+                event.preventDefault();
+                var nameID = $(this).data('id');
+                
+                $.ajax({
+                    url: '/tg_accounts/index/start/',
+                    type: 'POST',
+                    data: { 
+                            id: nameID,
+                        },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            });
+
+            $('.download').click(function (event) {
+                event.preventDefault();
+                var phone = $(this).data('phone');
+                
+                $.ajax({
+                    url: '/tg_accounts/index/download/',
+                    type: 'POST',
+                    data: { 
+                            phone: phone,
+                        },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        var blob = new Blob([response], { type: 'application/octet-stream' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'users.txt';
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            });
+
+
+            $('.edit-text').click(function (event) {
+                event.preventDefault();
+                var nameID = $(this).data('id');
+                var userTextElement = $(this).closest('tr').find('.user-text');
+                var userText = userTextElement.text();
+                var userName = $(this).closest('tr').find('.user-name').text();
+
+                $('#user-id-input-text').val(nameID);
+                $('#edit-text-input').val(userText);
+
+                $('#edit-modal').fadeIn();
+                $('#overlay-text').fadeIn();
+                $('body').addClass('modal-open');
+            });
+
+            $('#overlay-text').click(function () {
+                $('#edit-modal').fadeOut();
+                $(this).fadeOut();
+                $('body').removeClass('modal-open');
+            });
+
+            $(document).keydown(function (e) {
+                if (e.key === 'Escape') {
+                    $('#edit-modal').fadeOut();
+                    $('#overlay-text').fadeOut();
+                    $('body').removeClass('modal-open');
+                }
+            });
+
+            $('#edit-text-form').submit(function (event) {
+                event.preventDefault();
+                var nameID = $('#user-id-input-text').val();
+                var newText = $('#edit-text-input').val();
+                $.ajax({
+                    url: '/tg_accounts/index/update_text/',
+                    type: 'POST',
+                    data: { 
+                        id: nameID,
+                        text: newText 
+                    },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>

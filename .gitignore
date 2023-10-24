@@ -1,0 +1,7 @@
+__pycache__/
+migrations/
+__init__.py
+package-lock.json
+node_modules/
+chrome-linux64/
+staticfiles/

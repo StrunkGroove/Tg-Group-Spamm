@@ -1,0 +1,53 @@
+#create-name-form {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+#create-phone-form {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 14px;
+}
+
+form label {
+    display: none;
+}
+
+form input,
+form textarea {
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+form input::placeholder,
+form textarea::placeholder {
+    font-size: 14px;
+    color: #666;
+}
+
+form button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}

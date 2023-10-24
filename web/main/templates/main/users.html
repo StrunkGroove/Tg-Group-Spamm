@@ -1,0 +1,87 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accounts List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/body.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/index_form.css' %}">
+</head>
+<body>
+    {% include 'main/menu.html' %}
+    {% include 'main/users_table.html' %}
+
+    <h2>Append a New Account</h2>
+    <form method="post" id="create-phone-form">
+        {% csrf_token %}
+        <div class="input-container">
+            Name: 
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            
+            <br><br>
+
+            Identification: 
+            {{ form.identification.label_tag }}
+            {{ form.identification }}
+        </div>
+        <button type="submit">Create</button>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            $('#create-phone-form').submit(function (event) {
+                event.preventDefault();
+    
+                var formData = $(this).serialize();
+    
+                $.ajax({
+                    url: '/tg_accounts/users/',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.delete-phone').click(function (event) {
+                event.preventDefault();
+                var userID = $(this).data('id');
+                
+                $.ajax({
+                    url: '/tg_accounts/users/delete/',
+                    type: 'POST',
+                    data: { 
+                            id: userID,
+                        },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

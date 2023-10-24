@@ -1,0 +1,9 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'main/css/menu.css' %}">
+
+<div class="navbar">
+    <a href="{% url 'index' %}">Accounts</a>
+    <a href="{% url 'instructions' %}">Instrunction</a>
+    <a href="{% url 'username' %}">Require users</a>
+</div>

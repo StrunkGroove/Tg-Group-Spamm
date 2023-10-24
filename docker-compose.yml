@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+    web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        ports:
+            - 8000:8000
+        volumes:
+            - ./web:/app
+            - main_static:/main/static
+            - main_templates:/main/templates
+            - main_accounts:/accounts/templates
+
+volumes:
+    main_static:
+    main_templates:
+    main_accounts:

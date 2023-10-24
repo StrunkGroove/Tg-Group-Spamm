@@ -1,0 +1,56 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'main/css/table.css' %}">
+
+<table class="user-table">
+    <thead>
+        <tr>
+            <th>Phone</th>
+            <th>Password</th>
+            <th>Status</th>
+            <th>Server</th>
+            <th>Switch server</th>
+            <th>Switch text</th>
+            <th>Download</th>
+            <th>Delete bot</th>
+            <th>User take spamm</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.password }}</td>
+                <td>
+                    {% if user.status %}
+                        <span>{{ user.start }}</span>
+                    {% else %}
+                        <button class="start-bot" data-id="{{ user.id }}">Start</button>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ user.server }}
+                </td>
+                <td>
+                    <button class="edit-server" data-id="{{ user.id }}">Edit Server</button></td>
+                </td>
+                <td>
+                    <span class="user-text" style="display: none;">{{ user.text }}</span>
+                    <button class="edit-text" data-id="{{ user.id }}">Edit text</button></td>
+                <td>
+                    <button class="download" data-phone="{{ user.phone }}">Download</button>
+                </td>
+                <td>
+                    <button class="delete-name" data-id="{{ user.id }}">Delete</button>
+                </td>
+                <td>
+                    {% if usersTakeSpamm %}
+                        <span>{{ usersTakeSpamm }}</span>
+                    {% else %}
+                        <span>0</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
