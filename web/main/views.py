@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from tg_accounts.models import RequiredUserModel, UsernameModel, SpammUsersModel
 from tg_accounts.forms import RequiredUserForm, UsernameForm
 
+
 @login_required(login_url='block')
 def index(request):
     users = UsernameModel.objects.all()
